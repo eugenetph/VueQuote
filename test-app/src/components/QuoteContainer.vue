@@ -1,6 +1,6 @@
 <template>
   <div class="quotes-container">
-    <Quote :key="index" v-for="(quote, index) in quoteData" :quote="quote" />
+    <Quote :key="index" v-for='(quote, index) in quoteList' :quote="quote" @likeEventListener='updateFavoriteAuthorList' :isLiked='isLiked(quote.author)' />
     <!-- <p>test</p> -->
   </div>
 </template>
@@ -14,8 +14,16 @@ export default {
     Quote
   },
   props: {
-    quoteData: Array,
-    toSearch: String
+    quoteList: Array,
+    favoriteAuthorList: Array
+  },
+  methods: {
+    updateFavoriteAuthorList(authorName) {
+      this.$emit('updateFavoriteAuthorList', authorName);
+    },
+    isLiked (authorName) {
+      return this.favoriteAuthorList ? this.favoriteAuthorList.includes(authorName) : false
+    }
   }
 };
 </script>

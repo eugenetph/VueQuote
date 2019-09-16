@@ -2,7 +2,7 @@
   <div class="quote">
     <p>{{ quote.quote }}</p>
     <span>{{ quote.author }}</span>
-    <button class="quote-like active">Like</button>
+    <button @click='likeEventListener' :class="isLiked ? 'quote-like active' : 'quote-like ínactive'">Like</button>
   </div>
 </template>
 
@@ -10,7 +10,13 @@
 export default {
   name: "Quote",
   props: {
-    quote: Object
+    quote: Object,
+    isLiked: Boolean
+  },
+  methods: {
+    likeEventListener () {
+      this.$emit('likeEventListener', this.quote.author);
+    }
   }
 };
 </script>
@@ -31,6 +37,10 @@ export default {
 }
 
 .quote-like.active {
+    background-color: #ece0dd;
+}
+
+.quote-like.inactive {
     background-color: #fab1a0;
 }
 </style>

@@ -3,10 +3,15 @@
     <div class="container">
       <div class="title">
         <h1>Best quotes of the world</h1>
-        <input placeholder="Author..." />
+        <input placeholder="Author..." v-model="searchedByAuthor" />
+        <!-- <input placeholder="Author..." :value="searchedByAuthor" @input="searchedByAuthor = $event.target.value" /> -->
       </div>
-      <Authors />
-      <QuoteContainer :quoteData="dataSource" />
+      <Authors :favoriteAuthorList="favoriteAuthorList" />
+      <QuoteContainer
+        :quoteList="searchQuoteList"
+        :favoriteAuthorList="favoriteAuthorList"
+        @updateFavoriteAuthorList="updateFavoriteAuthorList"
+      />
     </div>
   </div>
 </template>
@@ -14,7 +19,7 @@
 <script>
 // import HelloWorld from "./components/HelloWorld.vue";
 import QuoteContainer from "./components/QuoteContainer.vue";
-import Authors from './components/Authors.vue'
+import Authors from "./components/Authors.vue";
 import axios from "axios";
 
 export default {
@@ -25,13 +30,39 @@ export default {
   },
   data() {
     return {
-      dataSource: undefined
+      dataSource: [],
+      searchedByAuthor: "",
+      favoriteAuthorList: []
     };
   },
   mounted() {
     axios.get("http://localhost:3001").then(response => {
       this.dataSource = response.data;
     });
+  },
+  computed: {
+    searchQuoteList() {
+      if (this.searchedByAuthor) {
+        return this.dataSource.filter(quote =>
+          quote.author
+            .toLowerCase()
+            .includes(this.searchedByAuthor.toLowerCase())
+        );
+      }
+      return this.dataSource;
+    }
+  },
+  methods: {
+    updateFavoriteAuthorList(authorName) {
+      let isExisted = this.favoriteAuthorList ? this.favoriteAuthorList.includes(authorName) : false;
+      if (isExisted) {
+        this.favoriteAuthorList = this.favoriteAuthorList.filter(
+          author => author !== authorName
+        );
+      } else {
+        this.favoriteAuthorList = [...this.favoriteAuthorList, authorName];
+      }
+    }
   }
 };
 </script>
@@ -46,16 +77,16 @@ export default {
   margin-top: 60px;
 }
 body {
-    padding: 20px;
+  padding: 20px;
 }
 input {
-    height: 20px;
-    width: 150px;
-    margin-left: auto;
+  height: 20px;
+  width: 150px;
+  margin-left: auto;
 }
 .title {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 .container {
   display: flex;
@@ -63,9 +94,9 @@ input {
   justify-content: space-between;
 }
 .title h1 {
-    margin-left: auto;
+  margin-left: auto;
 }
 .disabled {
-    background: lightgray;
+  background: lightgray;
 }
 </style>

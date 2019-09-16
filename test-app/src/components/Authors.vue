@@ -1,12 +1,12 @@
 <template>
   <div class="authors-container">
     <h3>Favorite Authors</h3>
-    <ul>
+    <!-- <ul>
       <li>something</li>
-    </ul>
-    <!-- <ul :for="name in names">
-      <li>{{ name }}</li>
     </ul> -->
+    <ul :key="index" v-for="(author, index) in favoriteAuthorList">
+      <li>{{ author }}</li>
+    </ul>
   </div>
 </template>
 
@@ -14,7 +14,7 @@
 export default {
   name: "Authors",
   props: {
-    names: Array
+    favoriteAuthorList: Array
   }
 };
 </script>

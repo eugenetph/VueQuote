@@ -59,6 +59,7 @@ export default {
       } else {  
         this.listOfFavoriteAuthors.push(value);
       }
+      return quoteList
     }, 
     insideFavorite(value) {
       return this.listOfFavoriteAuthors.includes(value)
