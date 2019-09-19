@@ -6,9 +6,10 @@
         <input placeholder="Author..." v-model="searchedByAuthor" />
         <!-- <input placeholder="Author..." :value="searchedByAuthor" @input="searchedByAuthor = $event.target.value" /> -->
       </div>
+      <Navigation @pageNumberEvent="updatepageNumber" :maxPageNumber="Math.floor(searchQuoteList.length/9)"/>
       <Authors :favoriteAuthorList="favoriteAuthorList" />
       <QuoteContainer
-        :quoteList="searchQuoteList"
+        :quoteList="searchQuoteList.slice(9 * pageNumber,9 * (pageNumber+1))"
         :favoriteAuthorList="favoriteAuthorList"
         @updateFavoriteAuthorList="updateFavoriteAuthorList"
       />
@@ -20,19 +21,22 @@
 // import HelloWorld from "./components/HelloWorld.vue";
 import QuoteContainer from "./components/QuoteContainer.vue";
 import Authors from "./components/Authors.vue";
+import Navigation from "./components/Navigation.vue"
 import axios from "axios";
 
 export default {
   name: "app",
   components: {
     QuoteContainer,
-    Authors
+    Authors,
+    Navigation
   },
   data() {
     return {
       dataSource: [],
       searchedByAuthor: "",
-      favoriteAuthorList: []
+      favoriteAuthorList: [],
+      pageNumber: 0
     };
   },
   mounted() {
@@ -54,7 +58,9 @@ export default {
   },
   methods: {
     updateFavoriteAuthorList(authorName) {
-      let isExisted = this.favoriteAuthorList ? this.favoriteAuthorList.includes(authorName) : false;
+      let isExisted = this.favoriteAuthorList
+        ? this.favoriteAuthorList.includes(authorName)
+        : false;
       if (isExisted) {
         this.favoriteAuthorList = this.favoriteAuthorList.filter(
           author => author !== authorName
@@ -62,6 +68,9 @@ export default {
       } else {
         this.favoriteAuthorList = [...this.favoriteAuthorList, authorName];
       }
+    },
+    updatepageNumber(page) {
+      this.pageNumber = page
     }
   }
 };
@@ -95,8 +104,5 @@ input {
 }
 .title h1 {
   margin-left: auto;
-}
-.disabled {
-  background: lightgray;
 }
 </style>
